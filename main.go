@@ -74,8 +74,13 @@ func main() {
 	// use the previously defined function to turn the csv data into a list of house structs
     house_data := CreateHousingData(data)
 
+    // convert an array of structs to JSON using marshaling functions from the encoding/json package
+    jsonData, err := json.MarshalIndent(house_data, "", "  ")
+    if err != nil {
+        log.Fatal(err)
+    }
 
-	// Open the JSONL file
+	// Open the JSONL file that will be written to
 	file, err := os.Create(os.Args[2])
 	if err != nil {
 		panic(err)
@@ -84,13 +89,6 @@ func main() {
 
 	// Create a buffered writer for efficient writing
 	writer := bufio.NewWriter(file)
-
-    // convert an array of structs to JSON using marshaling functions from the encoding/json package
-    jsonData, err := json.MarshalIndent(house_data, "", "  ")
-    if err != nil {
-        log.Fatal(err)
-    }
-
 
 
 	var jsonArray []map[string]interface{}
@@ -108,16 +106,12 @@ func main() {
 		// Append a newline after each JSON object
 		data = append(data, '\n')
 
+		// write each element in json array to jsonl file
 		if _, err := writer.Write(data); err != nil {
 			panic(err)
 		}
 	}
 	writer.Flush()
-
-
-	// save file to the path in the second user argument
-	//os.WriteFile(os.Args[2], jsonData, os.ModePerm)
-
 
 }
 
