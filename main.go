@@ -1,5 +1,6 @@
 package main
 
+// import needed packages
 import (
 	"encoding/csv"
 	"encoding/json"
@@ -8,6 +9,7 @@ import (
 	"log"
 )
 
+// define struct to hold data from the csv that will become JSON
 type house struct {
 	Value int `json:"Value"`
 	Income string `json:"Income"`
@@ -22,12 +24,15 @@ type house struct {
 func CreateHousingData(data [][]string) []house {
     var house_data []house
     for i, line := range data {
-        if i > 0 { // omit header line
+		// we dont start at i = 0 because that is the column name row
+        if i > 0 { 
+			//define empty house struct variable to hold data
             var rec house
             for j, field := range line {
                 if j == 0 {
                     rec.Value, _ = strconv.Atoi(field)
                 } else if j == 1 {
+					// income is parsed as a string because of the period in this field
                     rec.Income = field
                 } else if j == 2 {
                     rec.Age, _ = strconv.Atoi(field)
@@ -48,9 +53,7 @@ func CreateHousingData(data [][]string) []house {
 }
 
 func main() {
-
-
-    // open file
+    // open file from the first user argument
     f, err := os.Open(os.Args[1])
     if err != nil {
         log.Fatal(err)
@@ -59,22 +62,23 @@ func main() {
     // remember to close the file at the end of the program
     defer f.Close()
 
-    // 2. Read CSV file using csv.Reader
+    // Read CSV file using csv.Reader
     csvReader := csv.NewReader(f)
     data, err := csvReader.ReadAll()
     if err != nil {
         log.Fatal(err)
     }
 
-    // 3. Assign successive lines of raw CSV data to fields of the created structs
+	// use the previously defined function to turn the csv data into a list of house structs
     house_data := CreateHousingData(data)
 
-    // 4. Convert an array of structs to JSON using marshaling functions from the encoding/json package
+    // convert an array of structs to JSON using marshaling functions from the encoding/json package
     jsonData, err := json.MarshalIndent(house_data, "", "  ")
     if err != nil {
         log.Fatal(err)
     }
 
+	// save file to the path in the second user argument
 	os.WriteFile(os.Args[2], jsonData, os.ModePerm)
 
 

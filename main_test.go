@@ -4,12 +4,9 @@ import (
 	"testing"
 )
 
-
-
-
-
 func TestCreateHousingData(t *testing.T) {
 
+	// define testdata
 	testdata := [][]string{
         {"value", "income", "age", "rooms", "bedrooms", "pop", "hh"},
         {"100", "10.5", "5", "2", "5", "10", "1"},
@@ -17,6 +14,7 @@ func TestCreateHousingData(t *testing.T) {
 
 	data := CreateHousingData(testdata)
 
+	// create empty answer list var to hold testdata
 	var ans_list []house
 
 	ans := house{
@@ -31,6 +29,7 @@ func TestCreateHousingData(t *testing.T) {
 
 	ans_list = append(ans_list, ans)
 
+	// compare parsed data to the data it should be parsed to
 	if data[0] != ans_list[0] {
         t.Errorf("parsed incorrectly")
     }
